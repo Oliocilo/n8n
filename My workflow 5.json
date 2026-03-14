@@ -1,0 +1,315 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "chatIds": ""
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        -32
+      ],
+      "id": "ad2d3825-cd7a-4f7c-a91c-bd484792ad17",
+      "name": "Telegram Trigger",
+      "webhookId": "3acb9430-6a43-41b0-95cd-e9194edd2f75",
+      "credentials": {
+        "telegramApi": {
+          "id": "COrHl5v40sNzWnDA",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1e143ad0-821c-4c6c-9a71-a7ad0e85b2c0",
+              "name": "message.text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        -32
+      ],
+      "id": "0a117a70-47ba-46f3-aac5-d5054b9ca7c9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "94e51b3f-9183-41cb-84b7-451e71ba5efb",
+              "leftValue": "={{ $json.message.text.toLowerCase() }}",
+              "rightValue": "=fotosintesis",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "610d09af-f831-4712-9077-2d24a93a3f23",
+              "leftValue": "={{ $json.message.text.toLowerCase() }}",
+              "rightValue": "=faktor",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "2f2fce0c-722d-4465-b0ce-414535686cfb",
+              "leftValue": "={{ $json.message.text.toLowerCase() }}",
+              "rightValue": "tahapan",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "9e96d8d4-1bdd-4001-ae22-6d0491970a0e",
+              "leftValue": "={{ $json.message.text.toLowerCase() }}",
+              "rightValue": "siklus calvin",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        -32
+      ],
+      "id": "d039c8dd-ebf0-4157-be59-f9c2e322266d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Edit Fields').item.json.message.text }}",
+        "options": {
+          "systemMessage": "Kamu adalah \"Asisten Spesialis Data Internal\" yang bertugas mengolah informasi eksklusif dari database Google Docs."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "ea9eee88-6c05-4fc1-8004-e2b8f3b96e20",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        -32
+      ],
+      "id": "76ef3ccd-518e-4380-945b-a8fb60543f9c",
+      "name": "Hasil True",
+      "webhookId": "ecf1c863-b501-4c93-bbe6-807aec0630e8",
+      "credentials": {
+        "telegramApi": {
+          "id": "COrHl5v40sNzWnDA",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "=models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        224,
+        144
+      ],
+      "id": "4687a061-5c54-456e-88ea-f1bfb3ef8f6e",
+      "name": "Gemini Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "VmRtOE2pkEbt5o1h",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Ami lagi pengen bahas fotosintesis aja hari ini.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        208
+      ],
+      "id": "9661bda2-bfe1-4608-a156-669d0e8a6a0b",
+      "name": "Hasil False",
+      "webhookId": "ecf1c863-b501-4c93-bbe6-807aec0630e8",
+      "credentials": {
+        "telegramApi": {
+          "id": "COrHl5v40sNzWnDA",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1JovGD9Iw7Qh3wlcKVkrRO1a09FSmxnzAeKGopG9LrRk/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        368,
+        160
+      ],
+      "id": "e62f0f49-451e-4e56-9a17-3a25a1a4fdba",
+      "name": "GDocs Data",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "yK9yUWclbMY1N82y",
+          "name": "Google Docs account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hasil False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Hasil True",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hasil False": {
+      "main": [
+        []
+      ]
+    },
+    "GDocs Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9224f898-2c26-48bb-a02c-31de63effd5c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a9061033301a241aa9238eeeb7e9cd64157113124d815ed45ae02f29ad5e40eb"
+  },
+  "id": "TWMz98d5vYNXuTIM",
+  "tags": []
+}
