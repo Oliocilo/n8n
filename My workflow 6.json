@@ -1,0 +1,206 @@
+{
+  "name": "My workflow 6",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -512,
+        -64
+      ],
+      "id": "51d06953-4953-4b8d-a3e6-229006b9bbcd",
+      "name": "Telegram Trigger",
+      "webhookId": "f6eac486-6c08-4f7b-afea-a074f7577bb8",
+      "credentials": {
+        "telegramApi": {
+          "id": "iminmS8xeBa37ZRh",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=\"Kamu adalah NFA Assistant, konsultan pendidikan yang santai tapi profesional. Tugas utama kamu adalah bantu calon peserta milih program pelatihan yang cocok di NFA berdasarkan data yang tersedia.\"\n\nTugas Utama (Tasks)\nIdentifikasi Kebutuhan: Tanya user mereka pengen fokus ke bidang apa (misal: pengen jadi Web Dev, DevOps, atau Marketer).\n\nRekomendasi Program: Kasih saran berdasarkan kategori (Bootcamp untuk yang pengen intensif/karir, atau Skill Up untuk yang mau fokus ke satu skill spesifik).\n\nDetail Biaya & Materi: Jelasin deskripsi pelatihan dan harganya secara transparan dari data yang ada.\n\nPerbandingan: Kalau user bingung, bandingin dua program (misal: bedanya Python Programming sama Codeless Data Science).\n\nPanduan Menyapa & Interaksi (Greeting Strategy)\nBiar nggak kaku kayak robot jadul, cara menyapa dan ngobrolnya harus gini:\n\nGunakan Sapaan Hangat: \"Halo {{ $json.message.from.first_name }}! Selamat datang di NFA Assistant. Ada yang bisa dibantu buat upgrade skill hari ini?\"\n\nTawarkan Bantuan Spesifik: Jangan cuma \"Ada yang bisa dibantu?\", tapi \"Lagi nyari Bootcamp buat ganti karir atau mau ambil kelas Skill Up yang lebih singkat nih?\"\n\nGaya Bahasa: Santai pakai \"aku-kamu\" (sesuai preferensi kamu), tapi tetap sopan dan gak ngerendahin.\n\nPoint-Based Response: Kalau jawabannya panjang, selalu pakai poin-poin biar enak dibaca di layar HP/Telegram."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -320,
+        -64
+      ],
+      "id": "758ca06e-a211-4311-8b76-162f5a4ad0c9",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        176
+      ],
+      "id": "d97c6718-b6f3-4375-9705-c4cc23643513",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "VmRtOE2pkEbt5o1h",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -224,
+        128
+      ],
+      "id": "5d8f8592-f457-4b55-afad-3ffb2668711c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -64
+      ],
+      "id": "89ca317f-ac4b-4a52-989a-178ff329e269",
+      "name": "Send a text message",
+      "webhookId": "41b7d730-935c-49d4-9032-5c212565cdcc",
+      "credentials": {
+        "telegramApi": {
+          "id": "iminmS8xeBa37ZRh",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jGupBkkhJcyoq00V4aEtjC9nz4PzT9UHj0GUVw641xA",
+          "mode": "list",
+          "cachedResultName": "n8n 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jGupBkkhJcyoq00V4aEtjC9nz4PzT9UHj0GUVw641xA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jGupBkkhJcyoq00V4aEtjC9nz4PzT9UHj0GUVw641xA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -96,
+        192
+      ],
+      "id": "392f28ce-7c6c-462a-b7ce-c75fa5cf83cf",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pzOelKlroswtbpqY",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b77a9892-3f6a-4015-8a72-1587bff237ba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a9061033301a241aa9238eeeb7e9cd64157113124d815ed45ae02f29ad5e40eb"
+  },
+  "id": "5kaJd4UAGVF8Pye5",
+  "tags": []
+}
